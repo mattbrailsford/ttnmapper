@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>TTN Mapper</title>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+        <link rel="stylesheet" href="css/ttnmapper.css">
+    </head>
+    <body>
+
+        <script type="text/x-template" id="ttn-map">
+            <div class="ttn-map">
+                <div id="ttn-map-instance" class="ttn-map-instance"></div>
+                <ttn-map-marker
+                    v-for="gateway in gatewaysWithLatLng"
+                    v-bind:map="map"
+                    v-bind:model="gateway"
+                    type="gateway">
+                </ttn-map-marker>
+                <ttn-map-tile
+                    v-for="tile in tiles"
+                    v-bind:map="map"
+                    v-bind:tile="tile">
+                </ttn-map-tile>
+                <ttn-info-bubble v-if="selectedItem"
+                    v-bind:map="map"
+                    v-bind:model="selectedItem">
+                </ttn-info-bubble>
+                <!-- TODO: Toggle switch to auto track new samples
+                <label class="switch ttn-auto-follow-switch" title="Auto follow updates">
+                    <input type="checkbox">
+                    <span class="slider round"></span>
+                </label>
+                -->
+            </div>
+        </script>
+
+        <div id="ttnmapper-map" v-cloak>  
+            <ttn-map v-bind:gateways="gateways"
+                v-bind:tiles="tiles">
+            </ttn-map>         
+        </div>
+
+        <div id="ttnmapper-mapper" v-cloak>
+            <button class="material-icons ttn-button" 
+                v-bind:class="status"
+                v-on:click="toggleConnection">{{buttonIcon}}</button>          
+        </div>
+
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAfUqw1aDPhNVSCAyql8n-9FVkf6vyG5HU&libraries=geometry"></script>
+        <script src="https://www.gstatic.com/firebasejs/4.8.0/firebase.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/4.8.0/firebase-firestore.js"></script>
+        
+        <script src="js/infobubble.js"></script>
+        <script src="js/rainbowvis.js"></script>
+        <script src="js/vue.js"></script>
+        <script src="js/lodash.min.js"></script>
+        <script src="js/moment.min.js"></script>
+        <script src="js/mqttws31.min.js"></script>
+        <script src="js/mqtt-client.min.js"></script>
+        <script src="js/ttnmapper.util.js"></script>
+        <script src="js/ttnmapper.config.js"></script>
+        <script src="js/ttnmapper.map.js"></script>
+        <script src="js/ttnmapper.mapper.js"></script>
+        <script>
+            (function(){
+                firebase.initializeApp(ttnmapper.config.firebase);
+                ttnmapper.map.init("#ttnmapper-map", ttnmapper.config);
+                ttnmapper.mapper.init("#ttnmapper-mapper", ttnmapper.config);
+            })();
+        </script>
+    </body>
+</html>
