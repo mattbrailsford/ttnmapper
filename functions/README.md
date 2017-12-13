@@ -14,7 +14,7 @@ Watches the samples collection and processes new samples and creates / updates h
 
 Give execute permission to deploy.sh
 
-````chmod +x ./deploy.sh````
+````chmod +x ./src/deploy.sh````
 
 Deploy updates via npm
 
