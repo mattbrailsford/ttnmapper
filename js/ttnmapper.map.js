@@ -18,6 +18,10 @@
         scale: 6
     }
 
+    var heatMapColourScale = new Rainbow();
+    heatMapColourScale.setSpectrum('2254f4','e6007c','f9bc26');
+    heatMapColourScale.setNumberRange(-15, 10);
+
     // ========================================================
     // Map Info Bubble
     // ========================================================
@@ -137,7 +141,7 @@
             self.drawTile = function () {
 
                 var tileBounds = ttnmapper.util.getTitleLatLngBounds(self.tile);
-                var colour = ttnmapper.util.heatMapColourScale.colourAt(self.tile.avg_snr);
+                var colour = heatMapColourScale.colourAt(self.tile.avg_snr);
 
                 console.log(self.tile.avg_snr, colour);
 
@@ -179,7 +183,7 @@
 
             var self = this;
             google.maps.event.clearInstanceListeners(self.mapTile);
-            self.mapMarker.setMap(null);
+            self.mapTile.setMap(null);
 
         }
     });

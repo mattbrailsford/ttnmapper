@@ -1,15 +1,6 @@
-(function(global){
+(function(){
 
-    // Create a global event bus
-    var eventBus = new Vue();
-
-    Object.defineProperties(Vue.prototype, {
-        $bus: {
-            get: function () {
-                return eventBus
-            }
-        }
-    })
+    'use strict';
 
     // zoom level 18 eq tile size of 90.5m2
     // calculate scale from zoom as 1 << zoom
@@ -25,10 +16,6 @@
     var pixelOrigin_ = {x: TILE_SIZE / 2, y: TILE_SIZE / 2};
     var pixelsPerLonDegree_ = TILE_SIZE / 360;
     var pixelsPerLonRadian_ = TILE_SIZE / (2 * Math.PI);
-
-    var heatMapColourScale = new Rainbow();
-    heatMapColourScale.setSpectrum('2254f4','e6007c','f9bc26');
-    heatMapColourScale.setNumberRange(-15, 10);
 
     // ========================================================
     // Private
@@ -79,9 +66,10 @@
         var worldCoord = fromLatLngToWorld(latLng);
 
         // Now convert to tile coord
-        var tileCoord = new google.maps.Point(
-            Math.floor(worldCoord.x * TILE_SCALE / TILE_SIZE),
-            Math.floor(worldCoord.y * TILE_SCALE / TILE_SIZE));
+        var tileCoord = {
+            x: Math.floor(worldCoord.x * TILE_SCALE / TILE_SIZE),
+            y: Math.floor(worldCoord.y * TILE_SCALE / TILE_SIZE)
+        };
 
         return tileCoord;
     }
@@ -89,9 +77,10 @@
     var fromTileToLatLng = function(point){
 
         // First convert to world coord
-        var worldCoord = new google.maps.Point(
-            point.x / TILE_SCALE * TILE_SIZE,
-            point.y / TILE_SCALE * TILE_SIZE);
+        var worldCoord = {
+            x: point.x / TILE_SCALE * TILE_SIZE,
+            y: point.y / TILE_SCALE * TILE_SIZE
+        };
 
         // Now convert to lat lng
         var latLng = fromWorldToLatLng(worldCoord);
@@ -102,9 +91,10 @@
     var getTitleLatLngBounds = function(nwPoint){
 
         // Get the next tile coords + 1 along
-        var sePoint = new google.maps.Point(
-            nwPoint.x + 1,
-            nwPoint.y + 1);
+        var sePoint = {
+            x: nwPoint.x + 1,
+            y: nwPoint.y + 1
+        };
 
         // Convert coords to lat lng
         var nw = fromTileToLatLng(nwPoint);
@@ -120,14 +110,19 @@
     }
 
     // Export API
-    global.ttnmapper = global.ttnmapper || {};
-    global.ttnmapper.util = global.ttnmapper.util || {
+    var api = {
         fromLatLngToWorld: fromLatLngToWorld,
         fromWorldToLatLng: fromWorldToLatLng,
         fromLatLngToTile: fromLatLngToTile,
         fromTileToLatLng: fromTileToLatLng,
-        getTitleLatLngBounds: getTitleLatLngBounds,
-        heatMapColourScale: heatMapColourScale
+        getTitleLatLngBounds: getTitleLatLngBounds
     }
 
-})(window, );
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = api;
+    } else {
+        window.ttnmapper = window.ttnmapper || {};
+        window.ttnmapper.util = window.ttnmapper.util || api;
+    }
+
+})();

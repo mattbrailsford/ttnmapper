@@ -1,3 +1,6 @@
 ttnmapper.config.js
 temp.txt
 test.html
+node_modules
+.firebaserc
+package-lock.json
