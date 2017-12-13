@@ -12,13 +12,13 @@
             <div class="ttn-map">
                 <div id="ttn-map-instance" class="ttn-map-instance"></div>
                 <ttn-map-marker
-                    v-for="gateway in gatewaysWithLatLng"
+                    v-for="gateway in gatewaysInView"
                     v-bind:map="map"
                     v-bind:model="gateway"
                     type="gateway">
                 </ttn-map-marker>
                 <ttn-map-tile
-                    v-for="tile in tiles"
+                    v-for="tile in tilesInView"
                     v-bind:map="map"
                     v-bind:tile="tile">
                 </ttn-map-tile>

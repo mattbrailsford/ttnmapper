@@ -256,11 +256,14 @@
         data: function () {
             return {
                 map: undefined,
+                gatewaysInView: [],
+                tilesInView: [],
                 selectedItem: undefined,
                 isReady: false
             }
         },
         computed: {
+
             gatewaysWithLatLng: function(){
 
                 var self = this;
@@ -269,13 +272,57 @@
                 });
 
             }
+
         },
         created: function(){
 
             var self = this;
+            
             self.$bus.$on('item-selected', function(newValue){
                 self.selectedItem = newValue;
             });
+
+            self.calculateGatewaysInView = function(){
+
+                var self = this;
+                if (!self.map){
+                    self.gatewaysInView = [];
+                    return;
+                }
+
+                var bounds = self.map.getBounds();
+                self.gatewaysInView = _.filter(self.gatewaysWithLatLng, function(g){
+                    return bounds.contains({
+                        lat: g.lat,
+                        lng: g.lng
+                    });
+                });
+
+            }
+
+            self.calculateTilesInView = function(){
+                
+                var self = this;
+                if (!self.map){
+                    self.tilesInView = [];
+                    return;
+                }
+
+                var bounds = self.map.getBounds();
+                var ne = bounds.getNorthEast();
+                var sw = bounds.getSouthWest();
+
+                var nw = { lat: ne.lat(), lng: sw.lng() };
+                var se = { lat: sw.lat(), lng: ne.lng() };
+
+                var nwTile = ttnmapper.util.fromLatLngToTile(nw);
+                var seTile = ttnmapper.util.fromLatLngToTile(se);
+
+                self.tilesInView = _.filter(self.tiles, function(t){
+                    return t.x >= nwTile.x && t.x <= seTile.x && t.y >= nwTile.y && t.y <= seTile.y;
+                });
+
+            }
 
         },
         mounted: function () {
@@ -329,14 +376,30 @@
             google.maps.event.addListener(self.map, 'click', function () {
                 self.$bus.$emit("item-selected", undefined);
             });
-
-            google.maps.event.addListenerOnce(self.map, 'idle', function (h) {
-                self.map.setZoom(defaultZoom);
-                self.map.setCenter(defaultPosition);
-                self.isReady = true;
-                self.$emit("map-ready");                
+            
+            google.maps.event.addListener(self.map, 'idle', function () {
+                if (!self.isReady){
+                    self.map.setZoom(defaultZoom);
+                    self.map.setCenter(defaultPosition);
+                    self.isReady = true;
+                    self.$emit("map-ready");  
+                }
+                self.calculateGatewaysInView();
+                self.calculateTilesInView();
             });
 
+        },
+        watch: {
+            tiles: function(){
+                var self = this;
+                self.calculateGatewaysInView();
+                self.calculateTilesInView();
+            },
+            tiles: function(){
+                var self = this;
+                self.calculateGatewaysInView();
+                self.calculateTilesInView();
+            }
         },
         destroyed: function () {
             google.maps.event.clearInstanceListeners(self.map);

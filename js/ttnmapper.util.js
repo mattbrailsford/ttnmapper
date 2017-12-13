@@ -2,6 +2,11 @@
 
     'use strict';
 
+    // ==============================================================
+    // IMPORTANT! Need to maintain no dependencies in this file
+    // as it also gets imported into the firebase functions codebase
+    // ==============================================================
+
     // zoom level 18 eq tile size of 90.5m2
     // calculate scale from zoom as 1 << zoom
     // -- 
