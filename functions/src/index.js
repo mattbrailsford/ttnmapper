@@ -54,6 +54,13 @@ exports.processTiles = functions.database.ref('samples/{sampleId}')
     const tilesRef = evt.data.adminRef.root.child('tiles');
     const sample = evt.data.val();
 
+    // If the accuracy of the GPS reading is greater than 100m
+    // then we'll just discount it as we can't really trust it
+    if (sample.acc > 100){
+        console.log('Skipping processing tile for sample '+ evt.data.key +' as accuracy was greater than 100m')
+        return false;
+    }
+
     // Get the best samples from the list of gateways
     var gateways = _.values(sample.gateways);
     var bestSnrGateway = _.maxBy(gateways, 'snr');
