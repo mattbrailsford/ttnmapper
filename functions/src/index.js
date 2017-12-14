@@ -49,58 +49,58 @@ exports.processGateways = functions.database.ref('samples/{sampleId}')
     });
 
 exports.processTiles = functions.database.ref('samples/{sampleId}')
-.onWrite(evt => {
+    .onWrite(evt => {
 
-    const tilesRef = evt.data.adminRef.root.child('tiles');
-    const sample = evt.data.val();
+        const tilesRef = evt.data.adminRef.root.child('tiles');
+        const sample = evt.data.val();
 
-    // If the accuracy of the GPS reading is greater than 100m
-    // then we'll just discount it as we can't really trust it
-    if (sample.acc > 100){
-        console.log('Skipping processing tile for sample '+ evt.data.key +' as accuracy was greater than 100m')
-        return false;
-    }
-
-    // Get the best samples from the list of gateways
-    var gateways = _.values(sample.gateways);
-    var bestSnrGateway = _.maxBy(gateways, 'snr');
-    var bestRssiGateway = _.maxBy(gateways, 'rssi');
-
-    // Calculate the tile coords
-    var tileCoords = util.fromLatLngToTile({
-        lat: sample.lat,
-        lng: sample.lng
-    });
-
-    // Store / update the tile
-    var tileKey = "x_" + tileCoords.x + "_y_" + tileCoords.y;
-    var tileRef = tilesRef.child(tileKey);
-    return tileRef.transaction(function(current) {
-
-        if (!current) {
-            current = {
-                x: tileCoords.x,
-                y: tileCoords.y,
-                avg_snr: bestSnrGateway.snr,
-                avg_rssi: bestRssiGateway.rssi,
-                gateways: {},
-                timestamp: sample.timestamp
-            };
-        } else {
-            // EMA = (sample * alpha) + (Prev EMA * (1 - alpha))
-            var alpha = 0.2;
-            current.avg_snr = ((bestSnrGateway.snr * alpha) + (current.avg_snr * (1 - alpha)));
-            current.avg_rssi = ((bestRssiGateway.rssi * alpha) + (current.avg_rssi * (1 - alpha)));
+        // If the accuracy of the GPS reading is greater than 100m
+        // then we'll just discount it as we can't really trust it
+        if (sample.acc > 100){
+            console.log('Skipping processing tile for sample '+ evt.data.key +' as accuracy was greater than 100m')
+            return false;
         }
 
-        // Add gateway id's to gateways collection
-        _.forEach(gateways, function(g){
-            if (!current.gateways.hasOwnProperty(g.gtw_id)){
-                current.gateways[g.gtw_id] = true;
+        // Get the best samples from the list of gateways
+        var gateways = _.values(sample.gateways);
+        var bestSnrGateway = _.maxBy(gateways, 'snr');
+        var bestRssiGateway = _.maxBy(gateways, 'rssi');
+
+        // Calculate the tile coords
+        var tileCoords = util.fromLatLngToTile({
+            lat: sample.lat,
+            lng: sample.lng
+        });
+
+        // Store / update the tile
+        var tileKey = "x_" + tileCoords.x + "_y_" + tileCoords.y;
+        var tileRef = tilesRef.child(tileKey);
+        return tileRef.transaction(function(current) {
+
+            if (!current) {
+                current = {
+                    x: tileCoords.x,
+                    y: tileCoords.y,
+                    avg_snr: bestSnrGateway.snr,
+                    avg_rssi: bestRssiGateway.rssi,
+                    gateways: {},
+                    timestamp: sample.timestamp
+                };
+            } else {
+                // EMA = (sample * alpha) + (Prev EMA * (1 - alpha))
+                var alpha = 0.2;
+                current.avg_snr = ((bestSnrGateway.snr * alpha) + (current.avg_snr * (1 - alpha)));
+                current.avg_rssi = ((bestRssiGateway.rssi * alpha) + (current.avg_rssi * (1 - alpha)));
             }
-        })
 
-        return current;
+            // Add gateway id's to gateways collection
+            _.forEach(gateways, function(g){
+                if (!current.gateways.hasOwnProperty(g.gtw_id)){
+                    current.gateways[g.gtw_id] = true;
+                }
+            })
+
+            return current;
+        });
+
     });
-
-});

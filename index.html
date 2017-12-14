@@ -17,6 +17,11 @@
                     v-bind:model="gateway"
                     type="gateway">
                 </ttn-map-marker>
+                <ttn-map-marker v-if="trackerPos"
+                    v-bind:map="map"
+                    v-bind:model="trackerPos"
+                    type="tracker">
+                </ttn-map-marker>
                 <ttn-map-tile
                     v-for="tile in tilesInView"
                     v-bind:map="map"

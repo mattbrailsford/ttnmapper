@@ -11,7 +11,7 @@
         anchor: new google.maps.Point(15, 38)
     }
 
-    var sampleIcon = {
+    var trackerIcon = {
         path: google.maps.SymbolPath.CIRCLE,
         strokeColor: '#0d83d0',
         fillColor: '#ffffff',
@@ -214,8 +214,8 @@
 
                 if (self.type == 'gateway'){
                     opts.icon = gatewayIcon;
-                } else {
-                    opts.icon = sampleIcon;
+                } else if (self.type == 'tracker') {
+                    opts.icon = trackerIcon;
                 }
 
                 self.mapMarker.setOptions(opts);
@@ -259,6 +259,7 @@
                 gatewaysInView: [],
                 tilesInView: [],
                 selectedItem: undefined,
+                trackerPos: undefined,
                 isReady: false
             }
         },
@@ -280,6 +281,15 @@
             
             self.$bus.$on('item-selected', function(newValue){
                 self.selectedItem = newValue;
+            });
+
+            self.$bus.$on('tracker-pos-changed', function(newValue){
+                if (newValue){
+                    newValue.type = 'tracker';
+                    self.map.setZoom(16);
+                    self.map.setCenter(newValue);
+                }
+                self.trackerPos = newValue;
             });
 
             self.calculateGatewaysInView = function(){
@@ -404,6 +414,7 @@
         destroyed: function () {
             google.maps.event.clearInstanceListeners(self.map);
             self.$bus.$off('item-selected');
+            self.$bus.$off('tracker-pos-changed');
         }
     });
 

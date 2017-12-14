@@ -15,7 +15,7 @@
         }
     }
 
-    var golocationOpts = {
+    var geolocationOpts = {
         enableHighAccuracy: true,
         timeout: 5000,
         maximumAge: 0
@@ -27,6 +27,7 @@
     var init = function(el, o){
         
         var data = _.defaultsDeep({
+            currentPos: undefined,
             status: "ready"
         }, o, options);
 
@@ -46,31 +47,44 @@
                 })
                 .on("connect", function(){
                     
-                    // Subscribe to topic
-                    self.client.subscribe(self.mqtt.topic, function(e, g){
-                        if (e){
-                            self.status = "error";
-                            self.client.disconnect();
-                            console.log("ERROR "+ e);
-                        } else {
-                            
-                            // Check we can get current position
-                            navigator.geolocation.getCurrentPosition(function(pos){
-                                self.status = "connected"; 
-                            }, function(err){
-                                self.status = "error";
-                                self.client.disconnect();
-                                console.log("ERROR "+ err.code +": "+ err.message);
-                            }, golocationOpts);
+                    // Setup geo watcher
+                    var geoWatcherInited = false;
+                    self.geoWatcher = navigator.geolocation.watchPosition(function(pos){
+                        
+                        self.currentPos = {
+                            lat: pos.coords.latitude,
+                            lng: pos.coords.longitude,
+                            acc: pos.coords.accuracy
+                        };
+
+                        if (!geoWatcherInited){
+
+                            // Subscribe to topic
+                            self.client.subscribe(self.mqtt.topic, function(e, g){
+                                if (e){
+                                    self.status = "error";
+                                    self.client.disconnect();
+                                    console.log("ERROR "+ e);
+                                } else {
+                                    self.status = "connected"; 
+                                }
+                            })
 
                         }
-                    })
+                        
+                        geoWatcherInited = true;
+
+                    }, function(err){
+                        console.log("ERROR "+ err.code +": "+ err.message);
+                    }, geolocationOpts);
 
                 })
                 .on('disconnect', function() {
                     if (self.status != "error"){
                         self.status = "ready";
                     }
+                    navigator.geolocation.clearWatch(self.geoWatcher);
+                    self.currentPos = undefined;
                 })
                 .on('connecting', function(){
                     self.status = "connecting";
@@ -79,7 +93,7 @@
                     var payload = JSON.parse(data);
                     var payloadDate = moment(payload.metadata.time);
 
-                    navigator.geolocation.getCurrentPosition(function(pos){
+                    if(self.currentPos){
 
                         // If there were previously any errors, 
                         // set the status back to connected
@@ -94,9 +108,9 @@
                             freq: payload.metadata.frequency,
                             data_rate: payload.metadata.data_rate,
                             coding_rate: payload.metadata.coding_rate,
-                            lat: pos.coords.latitude,
-                            lng: pos.coords.longitude,
-                            acc: pos.coords.accuracy,                            
+                            lat: self.currentPos.lat,
+                            lng: self.currentPos.lng,
+                            acc: self.currentPos.acc,                            
                             gateways: _.keyBy(_.map(payload.metadata.gateways, function(g){
                                 var g2 = {
                                     gtw_id: g.gtw_id,
@@ -123,12 +137,11 @@
                             timestamp: payloadDate.valueOf()
                         });
 
-                    });
+                    } else {
+                        self.status = "warning";
+                    }
 
-                }, function(err){
-                    self.status = "warning";
-                    console.log("ERROR "+ err.code +": "+ err.message);
-                }, golocationOpts);
+                });
                                 
                 if (!navigator.geolocation) {
                     self.status = "error";
@@ -175,6 +188,11 @@
 
                 }
 
+            },
+            watch: {
+                currentPos: function(newValue){
+                    this.$bus.$emit('tracker-pos-changed', newValue);
+                }
             }
         })
 
