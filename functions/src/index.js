@@ -84,6 +84,7 @@ exports.processTiles = functions.database.ref('samples/{sampleId}')
                     avg_snr: bestSnrGateway.snr,
                     avg_rssi: bestRssiGateway.rssi,
                     gateways: {},
+                    sample_count: 1,
                     timestamp: sample.timestamp
                 };
             } else {
@@ -91,6 +92,7 @@ exports.processTiles = functions.database.ref('samples/{sampleId}')
                 var alpha = 0.2;
                 current.avg_snr = ((bestSnrGateway.snr * alpha) + (current.avg_snr * (1 - alpha)));
                 current.avg_rssi = ((bestRssiGateway.rssi * alpha) + (current.avg_rssi * (1 - alpha)));
+                current.sample_count = current.sample_count + 1;
             }
 
             // Add gateway id's to gateways collection

@@ -66,6 +66,7 @@
                     content += '<table>';
                     content += '<tr><th>avg_rssi:</th><td>'+ self.model.avg_rssi +'</td></tr>';
                     content += '<tr><th>avg_snr:</th><td>'+ self.model.avg_snr +'</td></tr>';
+                    content += '<tr><th>sample_count:</th><td>'+ self.model.sample_count +'</td></tr>';
                     content += '<tr><th>gtw_ids:</th><td>';
                     _.forEach(_.keys(self.model.gateways), function(key, idx){
                         content += key +'<br />';
