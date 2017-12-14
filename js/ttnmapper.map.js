@@ -144,8 +144,6 @@
                 var tileBounds = ttnmapper.util.getTitleLatLngBounds(self.tile);
                 var colour = heatMapColourScale.colourAt(self.tile.avg_snr);
 
-                console.log(self.tile.avg_snr, colour);
-
                 var opts = {
                     bounds: tileBounds,
                     map: self.map,
@@ -197,6 +195,8 @@
         created: function () {
 
             var self = this;
+
+            console.log(self.model);
 
             // Create the marker
             self.mapMarker = new google.maps.Marker();
@@ -260,7 +260,6 @@
                 gatewaysInView: [],
                 tilesInView: [],
                 selectedItem: undefined,
-                trackerPos: undefined,
                 isReady: false
             }
         },
@@ -282,17 +281,6 @@
             
             self.$bus.$on('item-selected', function(newValue){
                 self.selectedItem = newValue;
-            });
-
-            self.$bus.$on('tracker-pos-changed', function(newValue){
-                if (newValue){
-                    newValue.type = 'tracker';
-                    if (!self.trackerPos){
-                        self.map.setZoom(16);
-                        self.map.setCenter(newValue);
-                    }
-                }
-                self.trackerPos = newValue;
             });
 
             self.calculateGatewaysInView = function(){
@@ -417,7 +405,6 @@
         destroyed: function () {
             google.maps.event.clearInstanceListeners(self.map);
             self.$bus.$off('item-selected');
-            self.$bus.$off('tracker-pos-changed');
         }
     });
 
@@ -467,16 +454,12 @@
                 // Setup listeners for tiles
                 var tilesRef = self.db.ref('tiles')
                 tilesRef.on('child_added', function(data){
-                    console.log("Tile added");
                     var t = data.val();
                     t.$key = data.key;
                     t.type = 'tile';
                     self.tiles.push(t);
-
-                    console.log(self.tiles);
                 });
                 tilesRef.on('child_changed', function(data){
-                    console.log("Tile changed");
                     var t = data.val();
                     t.$key = data.key;
                     t.type = 'tile';
@@ -486,7 +469,6 @@
                     }
                 });
                 tilesRef.on('child_removed', function(data){
-                    console.log("Tile deleted");
                     var idx = _.findIndex(self.tiles, { $key: data.key });
                     if (idx >= 0){
                         self.tiles.splice(idx, 1);

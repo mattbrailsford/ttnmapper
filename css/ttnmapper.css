@@ -16,9 +16,8 @@ html, body, #ttnmapper-map, .ttn-map, .ttn-map-instance {
 }
 
 .ttn-button {
-    position: fixed;
-    right: 20px;
-    bottom: 20px;
+    right: 20px !important;
+    bottom: 20px !important;
     width: 40px;
     height: 40px;
     color: white;
@@ -33,8 +32,8 @@ html, body, #ttnmapper-map, .ttn-map, .ttn-map-instance {
 
 @media screen and (min-width: 460px){
     .ttn-button {
-        right: 40px;
-        bottom: 40px;
+        right: 40px !important;
+        bottom: 40px !important;
         width: 56px;
         height: 56px;
     }

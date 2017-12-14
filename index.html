@@ -17,11 +17,6 @@
                     v-bind:model="gateway"
                     type="gateway">
                 </ttn-map-marker>
-                <ttn-map-marker v-if="trackerPos"
-                    v-bind:map="map"
-                    v-bind:model="trackerPos"
-                    type="tracker">
-                </ttn-map-marker>
                 <ttn-map-tile
                     v-for="tile in tilesInView"
                     v-bind:map="map"
@@ -31,30 +26,29 @@
                     v-bind:map="map"
                     v-bind:model="selectedItem">
                 </ttn-info-bubble>
-                <!-- TODO: Toggle switch to auto track new samples
-                <label class="switch ttn-auto-follow-switch" title="Auto follow updates">
-                    <input type="checkbox">
-                    <span class="slider round"></span>
-                </label>
-                -->
+                <slot v-bind:map="map"></slot>
             </div>
         </script>
 
         <div id="ttnmapper-map" v-cloak>  
             <ttn-map v-bind:gateways="gateways"
                 v-bind:tiles="tiles">
-            </ttn-map>         
-        </div>
 
-        <div id="ttnmapper-mapper" v-cloak>
-            <button class="material-icons ttn-button" 
-                v-bind:class="status"
-                v-on:click="toggleConnection">{{buttonIcon}}</button>          
+                <!-- Begin optional map components -->
+                <template scope="{map}">
+                    <ttn-mapper v-bind:mqtt-config="mqtt"
+                        v-bind:map="map">
+                    </ttn-mapper>
+                </template>
+                <!-- End optional map components -->
+
+            </ttn-map>         
         </div>
 
         <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAfUqw1aDPhNVSCAyql8n-9FVkf6vyG5HU&libraries=geometry"></script>
         <script src="https://www.gstatic.com/firebasejs/4.8.0/firebase.js"></script>
         <script src="https://www.gstatic.com/firebasejs/4.8.0/firebase-firestore.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
         
         <script src="js/infobubble.js"></script>
         <script src="js/rainbowvis.js"></script>
@@ -72,7 +66,6 @@
             (function(){
                 firebase.initializeApp(ttnmapper.config.firebase);
                 ttnmapper.map.init("#ttnmapper-map", ttnmapper.config);
-                ttnmapper.mapper.init("#ttnmapper-mapper", ttnmapper.config);
             })();
         </script>
     </body>
