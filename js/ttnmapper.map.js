@@ -283,11 +283,11 @@
                 self.selectedItem = newValue;
             });
 
-            self.$bus.$on('tracker-pos-changed', function(newValue, oldValue){
+            self.$bus.$on('tracker-pos-changed', function(newValue){
                 if (newValue){
                     newValue.type = 'tracker';
                     self.map.setZoom(16);
-                    if (!oldValue){
+                    if (!self.trackerPos){
                         self.map.setCenter(newValue);
                     }
                 }
