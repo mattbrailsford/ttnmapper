@@ -286,8 +286,8 @@
             self.$bus.$on('tracker-pos-changed', function(newValue){
                 if (newValue){
                     newValue.type = 'tracker';
-                    self.map.setZoom(16);
                     if (!self.trackerPos){
+                        self.map.setZoom(16);
                         self.map.setCenter(newValue);
                     }
                 }
