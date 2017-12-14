@@ -76,7 +76,6 @@
 
                     }, function(err){
                         console.log("ERROR "+ err.code +": "+ err.message);
-                        alert(err.message);
                     }, geolocationOpts);
 
                 })
