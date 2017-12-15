@@ -4,18 +4,6 @@
     // Variables
     // ========================================================
 
-    var gatewayIcon = {
-        url: 'img/marker_cloud.svg',
-        anchor: new google.maps.Point(15, 38)
-    }
-
-    var trackerIcon = {
-        path: google.maps.SymbolPath.CIRCLE,
-        strokeColor: '#0d83d0',
-        fillColor: '#ffffff',
-        scale: 6
-    }
-
     var heatMapColourScale = new Rainbow();
     heatMapColourScale.setSpectrum('2254f4','e6007c','f9bc26');
     heatMapColourScale.setNumberRange(-15, 10);
@@ -206,13 +194,8 @@
                         lng: self.model.lng
                     },
                     map: self.map,
+                    icon: ttnmapper.common.markerIcons[self.type],
                     zIndex: 15
-                }
-
-                if (self.type == 'gateway'){
-                    opts.icon = gatewayIcon;
-                } else if (self.type == 'tracker') {
-                    opts.icon = trackerIcon;
                 }
 
                 self.mapMarker.setOptions(opts);
@@ -368,6 +351,11 @@
 
             self.map.mapTypes.set('ttnmapper', styledMap);
             self.map.setMapTypeId('ttnmapper');
+
+            // Attach map key
+            var $key = $(".ttn-key");
+            self.map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push($key.get(0));
+            $key.remove();
 
             // Setup map event handlers
             google.maps.event.addListener(self.map, 'click', function () {

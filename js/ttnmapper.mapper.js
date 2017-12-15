@@ -14,7 +14,7 @@
     // ========================================================
     Vue.component('ttnMapper', {
         props: ["mqttConfig", "map"],
-        template: "<ttn-map-marker v-if=\"currentPos\" v-bind:map=\"map\" v-bind:model=\"currentPos\" type=\"tracker\"></ttn-map-marker>",
+        template: "#ttn-mapper",
         data: function(){
             return {
                 currentPos: undefined,
@@ -40,6 +40,7 @@
                         self.button.removeClass(oldValue);
                     }
                 }
+                
             },
             currentPos: function(newValue, oldValue){
                 

@@ -26,8 +26,30 @@
                     v-bind:map="map"
                     v-bind:model="selectedItem">
                 </ttn-info-bubble>
+                <div class="ttn-key">
+                    <table>
+                        <tr>
+                            <th colspan="2"><span>SNR</span></th>
+                        </tr>
+                        <tr>
+                            <td rowspan="2" class="ttn-key-grad"></td>
+                            <td valign="top">10dB</td>
+                        </tr>
+                        <tr>
+                            <td valign="bottom">-15dB</td>
+                        </tr>
+                    </table>
+                </div>
                 <slot v-bind:map="map"></slot>
             </div>
+        </script>
+
+        <script type="text/x-template" id="ttn-mapper">
+            <ttn-map-marker v-if="currentPos" 
+                v-bind:map="map" 
+                v-bind:model="currentPos" 
+                type="tracker">
+            </ttn-map-marker>
         </script>
 
         <div id="ttnmapper-map" v-cloak>  
