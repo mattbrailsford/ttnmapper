@@ -18,8 +18,8 @@ html, body, #ttnmapper-map, .ttn-map, .ttn-map-instance {
 }
 
 .ttn-button {
-    right: 20px !important;
-    bottom: 20px !important;
+    right: 10px !important;
+    bottom: 30px !important;
     width: 56px;
     height: 56px;
     color: white;
@@ -34,8 +34,8 @@ html, body, #ttnmapper-map, .ttn-map, .ttn-map-instance {
 
 @media screen and (min-width: 460px){
     .ttn-button {
-        right: 40px !important;
-        bottom: 40px !important;
+        right: 30px !important;
+        bottom: 30px !important;
     }
 }
 
@@ -93,8 +93,8 @@ html, body, #ttnmapper-map, .ttn-map, .ttn-map-instance {
 
 .ttn-key {
     position: absolute;
-    left: 20px !important;
-    bottom: 40px !important;
+    left: 10px !important;
+    bottom: 30px !important;
     background-color: white;
     padding: 8px;
     border-radius: 2px;
