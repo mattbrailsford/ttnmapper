@@ -19,7 +19,6 @@
             return {
                 samplePoints: [],
                 currentPos: undefined,
-                wakeLock: undefined,
                 status: "ready"
             }
         },
@@ -43,17 +42,10 @@
                     }
                 }
 
-                if (navigator.getWakeLock){
-                    if (newValue == "connected"){
-                        navigator.getWakeLock("screen").then(function(wakeLock) {
-                            self.wakeLock = wakeLock.createRequest();
-                        });
-                    } else if (newValue == "ready" || newValue == "error"){
-                        if (self.wakeLock){
-                            self.wakeLock.cancel();
-                            self.wakeLock = undefined;
-                        }
-                    }
+                if (newValue == "connected"){
+                    self.noSleep.enable();
+                } else if (newValue == "ready" || newValue == "error"){
+                    self.noSleep.disable();
                 }
                 
             },
@@ -71,6 +63,8 @@
         created: function(){
 
             var self = this;
+            
+            self.noSleep = new NoSleep();
             
             self.initButton = function(){
                 self.button = $("<button class='material-icons ttn-button ready'>signal_wifi_off</button>");
