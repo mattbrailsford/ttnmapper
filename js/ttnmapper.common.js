@@ -28,8 +28,6 @@
             path: google.maps.SymbolPath.CIRCLE,
             strokeColor: '#0d83d0',
             strokeOpacity: 0.4,
-            fillColor: '#ffffff',
-            fillOpacity: 0.4,
             scale: 6
         }
     }
