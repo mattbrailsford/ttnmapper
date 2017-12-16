@@ -50,11 +50,18 @@
         </script>
 
         <script type="text/x-template" id="ttn-mapper">
-            <ttn-map-marker v-if="currentPos" 
-                v-bind:map="map" 
-                v-bind:model="currentPos" 
-                type="tracker">
-            </ttn-map-marker>
+            <span>
+                <ttn-map-marker v-if="currentPos" 
+                    v-bind:map="map" 
+                    v-bind:model="currentPos" 
+                    type="tracker">
+                </ttn-map-marker>
+                <ttn-map-marker v-for="samplePoint in samplePoints"
+                    v-bind:map="map" 
+                    v-bind:model="samplePoint" 
+                    type="sample">
+                </ttn-map-marker>
+            </span>
         </script>
 
         <div id="ttnmapper-map" v-cloak>  

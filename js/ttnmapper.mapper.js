@@ -17,6 +17,7 @@
         template: "#ttn-mapper",
         data: function(){
             return {
+                samplePoints: [],
                 currentPos: undefined,
                 status: "ready"
             }
@@ -168,6 +169,8 @@
                         }),
                         timestamp: payloadDate.valueOf()
                     });
+
+                    self.samplePoints.push(self.currentPos);
 
                 } else {
                     self.status = "warning";
