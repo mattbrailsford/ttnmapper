@@ -19,6 +19,7 @@
             return {
                 samplePoints: [],
                 currentPos: undefined,
+                wakeLock: undefined,
                 status: "ready"
             }
         },
@@ -39,6 +40,19 @@
                     self.button.text(newValue == "connected" ? "signal_wifi_4_bar" : "signal_wifi_off");
                     if (oldValue){
                         self.button.removeClass(oldValue);
+                    }
+                }
+
+                if (navigator.getWakeLock){
+                    if (newValue == "connected"){
+                        navigator.getWakeLock("screen").then(function(wakeLock) {
+                            self.wakeLock = wakeLock.createRequest();
+                        });
+                    } else if (newValue == "ready" || newValue == "error"){
+                        if (self.wakeLock){
+                            self.wakeLock.cancel();
+                            self.wakeLock = undefined;
+                        }
                     }
                 }
                 
