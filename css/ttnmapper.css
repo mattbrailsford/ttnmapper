@@ -118,7 +118,7 @@ html, body, #ttnmapper-map, .ttn-map, .ttn-map-instance {
 
 .ttn-key-grad {
     width: 20px;
-    height: 100px;
+    height: 60px;
 
     /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#f9bc26+10,e6007c+50,2254f4+90,2254f4+90 */
     background: #f9bc26; /* Old browsers */
@@ -126,6 +126,12 @@ html, body, #ttnmapper-map, .ttn-map, .ttn-map-instance {
     background: -webkit-linear-gradient(top, #f9bc26 10%,#e6007c 50%,#2254f4 90%,#2254f4 90%); /* Chrome10-25,Safari5.1-6 */
     background: linear-gradient(to bottom, #f9bc26 10%,#e6007c 50%,#2254f4 90%,#2254f4 90%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f9bc26', endColorstr='#2254f4',GradientType=0 ); /* IE6-9 */
+}
+
+@media screen and (min-width: 460px){
+    .ttn-key-grad {
+        height: 100px;
+    }
 }
 
 [v-cloak]{
