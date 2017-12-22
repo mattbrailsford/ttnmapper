@@ -13,7 +13,7 @@ On the server, the packets are inspected and two things happen.
 
 1. Any new gateways are extracted and added to a gateways collection. If the gateway has a geo location associated with it, the gateway will be plotted on all connected maps.
 
-2. The best SNR and RSSI readings are extracted from the packet and combined with previous readings falling within a given 100m2 area determined by the smartphones geolocation. Readings are combined as an Expontential Moving Average (EMA), giving more weight to the latest readings and degrading old readings over time.
+2. The best SNR and RSSI readings are extracted from the packet and combined with previous readings falling within a given 100m2 area determined by the smartphones geo location. Readings are combined as an Expontential Moving Average (EMA), giving more weight to the latest readings and degrading old readings over time.
 
 To use, follow the installation instructions below, then launch the application in your smartphones browser. With a TTN node connected, and a good smartphone signal, simply press the connect button in the bottom corner to connect and start the mapping process. Once finished, simply click the connect button again to disconnect.
 
@@ -86,7 +86,7 @@ Update the device id and MQTT details using the details from CloudMQTT (not the 
 
 ### Deploy the app
 
-If you are familiar with hosting, then you can host the files wherever you see fit, however for simiplicity I recomment using github pages and just serve them straight from your repository.
+If you are familiar with hosting, then you can host the files wherever you see fit, however for simiplicity I recommend using github pages and just serve them straight from your repository.
 
 To do this, in your repository go to the settings section
 
